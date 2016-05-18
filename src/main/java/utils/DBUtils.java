@@ -1,5 +1,8 @@
 package utils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,21 +19,33 @@ public class DBUtils {
 
     private Connection connection;
 
-    private Connection getConnection() {
+    private synchronized Connection getConnection() {
         if (connection == null) {
             connection = createConnection();
+            initializeViews();
         }
         return connection;
     }
 
-    private Connection createConnection() {
+    private synchronized Connection createConnection() {
         try {
             String timezone = TimeZone.getDefault().getID().toString();
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?user=openpkw&password=lwejlr2k3jlsfedlk2j34&serverTimezone=" + timezone);
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?user=openpkw&password=lwejlr2k3jlsfedlk2j34&serverTimezone=" + timezone+"&allowMultiQueries=true");
             return connection;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create connection to the database: " + ex.getMessage(), ex);
+        }
+    }
+
+    private void initializeViews() {
+        try {
+            String databaseInitializationFileName = "conf/init_database.sql";
+            Path databaseInitializationFile = Paths.get(ClassLoader.getSystemResource(databaseInitializationFileName).toURI());
+            String databaseInitializationScript = new String(Files.readAllBytes(databaseInitializationFile));
+            getConnection().createStatement().execute(databaseInitializationScript);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to initialize database views: " + ex.getMessage(), ex);
         }
     }
 
