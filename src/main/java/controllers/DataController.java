@@ -12,15 +12,19 @@ public class DataController {
     private DBUtils dbUtils;
 
     public Result votes() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_votes;");
     }
 
     public Result frequency() {
-        return returnSqlQueryResultAsJson("select * from openpkw.frequency;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_frequency;");
     }
 
     public Result protocols() {
-        return returnSqlQueryResultAsJson("select * from openpkw.protocols;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_protocols;");
+    }
+    
+    public Result peripheralCommittees() {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_peripheral_committees;");
     }
 
     private Result returnSqlQueryResultAsJson(String sqlQuery) {
