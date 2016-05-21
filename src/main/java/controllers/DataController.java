@@ -13,32 +13,36 @@ public class DataController {
     private DBUtils dbUtils;
 
     public Result votesForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_votes;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_country_votes;");
     }
 
     public Result frequencyForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_frequency;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_country_frequency;");
     }
 
     public Result protocolsForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_protocols;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_country_protocols;");
     }
 
-    public Result peripheralCommitteesForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_peripheral_committees;");
+    public Result districtCommitteesForCountry() {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_country_district_committees;");
     }
 
     public Result votesForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_votes_district where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_votes where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
     }
     
     public Result frequencyForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_frequency_district where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_frequency where districtCommitteeId = " + districtId + ";");
     }    
 
     public Result protocolsForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_protocols_district where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_protocols where districtCommitteeId = " + districtId + ";");
     }    
+    
+    public Result peripheralCommitteesForDistrict(@PathParam("districtId") int districtId) {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_peripheral_committees where districtCommitteeId = " + districtId + ";");
+    }
 
     private Result returnSqlQueryResultAsJson(String sqlQuery) {
         try {

@@ -9,10 +9,10 @@
     google.charts.setOnLoadCallback(drawCharts);
 
     function drawCharts() {
-        $.getJSON('/data/votes', function (data) { drawVotingResultsChart(data);});
-        $.getJSON('/data/protocols', function (data) { drawReceivedProtocolsChart(data);});
-    	$.getJSON('/data/frequency', function (data) { drawFrequencyChart(data);});
-        $.getJSON('/data/peripheralCommittees', function(data) { drawPeripheralCommitteesTable(data);});
+        $.getJSON('/data/country/votes', function (data) { drawVotingResultsChart(data);});
+        $.getJSON('/data/country/protocols', function (data) { drawReceivedProtocolsChart(data);});
+    	$.getJSON('/data/country/frequency', function (data) { drawFrequencyChart(data);});
+        $.getJSON('/data/country/districtCommittees', function(data) { drawDistrictCommitteesTable(data);});
     }
 
     function drawVotingResultsChart(jsonData) {
@@ -75,7 +75,7 @@
         chart.draw(data, options);
     }
 
-    function drawPeripheralCommitteesTable(jsonData) {
+    function drawDistrictCommitteesTable(jsonData) {
     	var data = new google.visualization.DataTable();
         data.addColumn('number', 'Nr okręgu');
         data.addColumn('string', 'Nazwa Komisji Okręgowej');
@@ -96,7 +96,7 @@
         new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
         new google.visualization.PatternFormat('<a href="district/{0}">Szczegóły</a>').format(data, [4]);
         	        
-        var table = new google.visualization.Table(document.getElementById('peripheralCommitteesTable'));
+        var table = new google.visualization.Table(document.getElementById('districtCommitteesTable'));
         var options = {
                 showRowNumber: false, 
                 width: '100%', 
@@ -121,6 +121,6 @@
     </tr>
 </table>
 
-<div id="peripheralCommitteesTable"></div>
+<div id="districtCommitteesTable"></div>
 
 </@layout.myLayout>

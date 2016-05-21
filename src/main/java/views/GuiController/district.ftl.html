@@ -11,10 +11,10 @@
     var districtCommitteeId = ${districtCommitteeId}
 
     function drawCharts() {
-        $.getJSON('/data/votes/district/' + districtCommitteeId, function (data) { drawVotingResultsChart(data);});
-        $.getJSON('/data/protocols/district/' + districtCommitteeId, function (data) { drawReceivedProtocolsChart(data);});
-    	$.getJSON('/data/frequency/district/' + districtCommitteeId, function (data) { drawFrequencyChart(data);});
-        $.getJSON('/data/peripheralCommittees', function(data) { drawPeripheralCommitteesTable(data);});
+        $.getJSON('/data/district/' + districtCommitteeId + "/votes", function (data) { drawVotingResultsChart(data);});
+        $.getJSON('/data/district/' + districtCommitteeId + "/protocols", function (data) { drawReceivedProtocolsChart(data);});
+    	$.getJSON('/data/district/' + districtCommitteeId + "/frequency", function (data) { drawFrequencyChart(data);});
+        $.getJSON('/data/district/' + districtCommitteeId + "/peripheralCommittees", function(data) { drawPeripheralCommitteesTable(data);});
     }
 
     function drawVotingResultsChart(jsonData) {
