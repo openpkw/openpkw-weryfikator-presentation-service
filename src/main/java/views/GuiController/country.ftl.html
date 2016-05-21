@@ -81,24 +81,28 @@
         data.addColumn('string', 'Nazwa Komisji Okręgowej');
         data.addColumn('string', 'Siedziba Komisji Okręgowej');
         data.addColumn('number', 'Procentowa liczba otrzymanych protokołów');
+        data.addColumn('string', 'Szczegóły');
         data.addRows($.map(jsonData, function(entry) {
             return [[
                      entry['district_committee_number'],
                      entry['name'],
                      entry['city'],
-                     entry['numberOfReceivedProtocols'] / entry['numberOfPeripherals']
+                     entry['numberOfReceivedProtocols'] / entry['numberOfPeripherals'],
+                     "" + entry['district_committee_id']
                    ]];
             }));
 
         new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
         new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
+        new google.visualization.PatternFormat('<a href="district/{0}">Szczegóły</a>').format(data, [4]);
         	        
         var table = new google.visualization.Table(document.getElementById('peripheralCommitteesTable'));
         var options = {
                 showRowNumber: false, 
                 width: '100%', 
                 height: '100%',
-                page : true
+                page : true,
+                allowHtml: true
         };
         table.draw(data, options);
     }

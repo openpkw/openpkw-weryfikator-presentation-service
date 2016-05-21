@@ -37,6 +37,7 @@ order by numberOfVotes desc;
 
 create view openpkw.results_peripheral_committees as
 select
+	dc.district_committee_id,
 	dc.district_committee_number,
     dc.name,
     dca.city,
