@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import ninja.Result;
 import ninja.Results;
+import ninja.params.PathParam;
 import utils.DBUtils;
 
 public class DataController {
@@ -11,20 +12,24 @@ public class DataController {
     @Inject
     private DBUtils dbUtils;
 
-    public Result votes() {
+    public Result votesForCountry() {
         return returnSqlQueryResultAsJson("select * from openpkw.results_votes;");
     }
 
-    public Result frequency() {
+    public Result frequencyForCountry() {
         return returnSqlQueryResultAsJson("select * from openpkw.results_frequency;");
     }
 
-    public Result protocols() {
+    public Result protocolsForCountry() {
         return returnSqlQueryResultAsJson("select * from openpkw.results_protocols;");
     }
-    
-    public Result peripheralCommittees() {
+
+    public Result peripheralCommitteesForCountry() {
         return returnSqlQueryResultAsJson("select * from openpkw.results_peripheral_committees;");
+    }
+
+    public Result votesForDistrict(@PathParam("districtId") int districtId) {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_votes_district where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
     }
 
     private Result returnSqlQueryResultAsJson(String sqlQuery) {

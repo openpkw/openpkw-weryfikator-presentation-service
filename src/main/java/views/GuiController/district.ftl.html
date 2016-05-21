@@ -1,0 +1,126 @@
+<#import "../layout/defaultLayout.ftl.html" as layout> 
+<@layout.myLayout "Home page">
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+
+    google.charts.load('current', {'packages':['corechart', 'table']});
+    google.charts.setOnLoadCallback(drawCharts);
+
+    var districtCommitteeId = ${districtCommitteeId}
+
+    function drawCharts() {
+        $.getJSON('/data/votes/district/' + districtCommitteeId, function (data) { drawVotingResultsChart(data);});
+        $.getJSON('/data/protocols', function (data) { drawReceivedProtocolsChart(data);});
+    	$.getJSON('/data/frequency', function (data) { drawFrequencyChart(data);});
+        $.getJSON('/data/peripheralCommittees', function(data) { drawPeripheralCommitteesTable(data);});
+    }
+
+    function drawVotingResultsChart(jsonData) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Komited wyborczy');
+        data.addColumn('number', 'Procent otrzymanych głosów');
+        data.addRows($.map(jsonData, function(entry) {
+            return [[entry['electionCommittee'], entry['numberOfVotes']]];
+            }));
+        
+         var view = new google.visualization.DataView(data);
+         view.setColumns([0, 1]);
+
+         var options = {
+           title: "Wyniki wyborcze w skali okręgu",
+           width: 800,
+           height: 600,
+           bar: {groupWidth: "95%"},
+           legend: { position: "none" },
+           hAxis: {slantedText:true, slantedTextAngle:45}
+         };
+                  
+    	 var chart = new google.visualization.ColumnChart(document.getElementById("votingResultsChart"));
+         chart.draw(view, options);
+    }
+
+    function drawReceivedProtocolsChart(jsonData) {
+        var totalProtocols = jsonData[0]['totalProtocols'];
+        var totalPeripheralCommittees = jsonData[0]['totalPeripheralCommittees'];
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Category');
+        data.addColumn('number', 'Number of protocols');
+        data.addRows([
+          ['Otrzymane', totalProtocols],
+          ['Nieotrzymane', totalPeripheralCommittees - totalProtocols]
+        ]);
+
+        var options = {'title':'Liczba otrzymanych protokołów wyborczych dla okręgu', 'width':400, 'height':300, 'legend' : {position:'bottom'}};
+
+        var chart = new google.visualization.PieChart(document.getElementById('receivedProtocolsChart'));
+        chart.draw(data, options);
+    }
+
+    function drawFrequencyChart(jsonData) {
+        var voters = jsonData[0]['voters'];
+        var allowedToVote =jsonData[0]['allowedToVote'];
+        
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Category');
+        data.addColumn('number', 'Number of voters');
+        data.addRows([
+          ['Głosy oddane', voters],
+          ['Głosy nieoddane', allowedToVote - voters]
+        ]);
+
+        var options = {'title':'Frekwencja wyborcza zbiorcza dla okręgu', 'width':400, 'height':300, 'legend' : {position:'bottom'}};
+
+        var chart = new google.visualization.PieChart(document.getElementById('frequencyChart'));
+        chart.draw(data, options);
+    }
+
+    function drawPeripheralCommitteesTable(jsonData) {
+    	var data = new google.visualization.DataTable();
+        data.addColumn('number', 'Nr okręgu');
+        data.addColumn('string', 'Nazwa Komisji Okręgowej');
+        data.addColumn('string', 'Siedziba Komisji Okręgowej');
+        data.addColumn('number', 'Procentowa liczba otrzymanych protokołów');
+        data.addRows($.map(jsonData, function(entry) {
+            return [[
+                     entry['district_committee_number'],
+                     entry['name'],
+                     entry['city'],
+                     entry['numberOfReceivedProtocols'] / entry['numberOfPeripherals']
+                   ]];
+            }));
+
+        new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
+        new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
+        	        
+        var table = new google.visualization.Table(document.getElementById('peripheralCommitteesTable'));
+        var options = {
+                showRowNumber: false, 
+                width: '100%', 
+                height: '100%',
+                page : true
+        };
+        table.draw(data, options);
+    }
+</script>
+
+<h3>${districtCommitteeName}</h3>
+    
+<table>
+    <tr>
+        <td rowspan="2"><div id="votingResultsChart"></div></td>
+        <td><div id="receivedProtocolsChart"></div></td>
+    </tr>
+    <tr>
+        <td><div id="frequencyChart"></div></td>
+    </tr>
+    <tr>
+        <td></td>
+    </tr>
+</table>
+
+<div id="peripheralCommitteesTable"></div>
+
+</@layout.myLayout>

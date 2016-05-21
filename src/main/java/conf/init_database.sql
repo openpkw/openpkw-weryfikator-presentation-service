@@ -2,6 +2,7 @@ drop view if exists openpkw.results_frequency;
 drop view if exists openpkw.results_protocols;
 drop view if exists openpkw.results_votes;
 drop view if exists openpkw.results_peripheral_committees;
+drop view if exists openpkw.results_votes_district;
 
 create view openpkw.results_frequency as 
 	select 
@@ -42,3 +43,27 @@ left join
 	openpkw.district_committee_address dca
 on
 	dc.district_committee_address_id = dca.district_committee_address_id;
+    
+create view openpkw.results_votes_district as
+select 
+	dc.district_committee_id as districtCommitteeId,
+	ec.symbol as electionCommittee,
+	sum(ecv.vote_number) as numberOfVotes
+from 
+	openpkw.election_committee_vote ecv
+left join
+	openpkw.election_committee_district ecd
+on 
+	ecd.election_committee_district_id = ecv.election_committee_district_id
+left join
+	openpkw.election_committee ec
+on 
+	ecd.election_committee_id = ec.election_committee_id
+left join
+	openpkw.district_committee dc
+on
+	dc.district_committee_id = ecd.district_committee_id
+group by 
+	districtCommitteeId, electionCommittee
+order by
+	numberOfVotes desc;
