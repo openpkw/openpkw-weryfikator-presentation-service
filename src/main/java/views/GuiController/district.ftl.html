@@ -11,10 +11,15 @@
     var districtCommitteeId = ${districtCommitteeId}
 
     function drawCharts() {
+    	$.getJSON('/data/district/' + districtCommitteeId, function (data) { displayDistrictDetails(data);});
         $.getJSON('/data/district/' + districtCommitteeId + "/votes", function (data) { drawVotingResultsChart(data);});
         $.getJSON('/data/district/' + districtCommitteeId + "/protocols", function (data) { drawReceivedProtocolsChart(data);});
     	$.getJSON('/data/district/' + districtCommitteeId + "/frequency", function (data) { drawFrequencyChart(data);});
         $.getJSON('/data/district/' + districtCommitteeId + "/peripheralCommittees", function(data) { drawPeripheralCommitteesTable(data);});
+    }
+
+    function displayDistrictDetails(jsonData) {
+        $('#districtDetails').html(jsonData[0]['districtName']);
     }
 
     function drawVotingResultsChart(jsonData) {
@@ -79,21 +84,21 @@
 
     function drawPeripheralCommitteesTable(jsonData) {
     	var data = new google.visualization.DataTable();
-        data.addColumn('number', 'Nr okręgu');
-        data.addColumn('string', 'Nazwa Komisji Okręgowej');
-        data.addColumn('string', 'Siedziba Komisji Okręgowej');
+        data.addColumn('string', 'Kod terytorialny gminy'),
+        data.addColumn('number', 'Nr obwodu');
+        data.addColumn('string', 'Nazwa Komisji Obwodowej');
         data.addColumn('number', 'Procentowa liczba otrzymanych protokołów');
         data.addRows($.map(jsonData, function(entry) {
             return [[
-                     entry['district_committee_number'],
-                     entry['name'],
-                     entry['city'],
-                     entry['numberOfReceivedProtocols'] / entry['numberOfPeripherals']
+                     entry['territorialCode'],
+                     entry['peripheralCommitteeNumber'],
+                     entry['peripheralCommitteeName'],
+                     entry['numberOfReceivedProtocols']
                    ]];
             }));
 
         new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
-        new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
+//        new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
         	        
         var table = new google.visualization.Table(document.getElementById('peripheralCommitteesTable'));
         var options = {
@@ -106,7 +111,7 @@
     }
 </script>
 
-<h3>${districtCommitteeName}</h3>
+<h3 id="districtDetails">${districtCommitteeName}</h3>
     
 <table>
     <tr>

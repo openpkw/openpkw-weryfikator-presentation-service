@@ -1,25 +1,18 @@
-drop view if exists openpkw.results_country_frequency;
-drop view if exists openpkw.results_country_protocols;
-drop view if exists openpkw.results_country_votes;
-drop view if exists openpkw.results_country_district_committees;
-
-drop view if exists openpkw.results_district_votes;
-drop view if exists openpkw.results_district_frequency;
-drop view if exists openpkw.results_district_protocols;
-drop view if exists openpkw.results_district_peripheral_committees;
-
 -- country level
 
+drop view if exists openpkw.results_country_frequency;
 create view openpkw.results_country_frequency as 
 	select 
 		(select sum(vote_number) from openpkw.election_committee_vote) as voters, 
         (select sum(allowed_to_vote) from openpkw.peripheral_committee) as allowedToVote;
         
+drop view if exists openpkw.results_country_protocols;
 create view openpkw.results_country_protocols as 
 	select 
 		(select count(*) from openpkw.peripheral_committee) as totalPeripheralCommittees, 
         (select count(*) from openpkw.protocol) as totalProtocols;
 
+drop view if exists openpkw.results_country_votes;
 create view openpkw.results_country_votes as
 select 
 	ec.symbol as electionCommittee,
@@ -36,6 +29,7 @@ on ecd.election_committee_id = ec.election_committee_id
 group by ecd.election_committee_id
 order by numberOfVotes desc;
 
+drop view if exists openpkw.results_country_district_committees;
 create view openpkw.results_country_district_committees as
 select
 	dc.district_committee_id,
@@ -52,7 +46,16 @@ on
 	dc.district_committee_address_id = dca.district_committee_address_id;
 
 -- district level
+
+drop view if exists openpkw.results_district_details;
+create view openpkw.results_district_details as
+select
+	district_committee_id as districtCommitteeId,
+	name as districtName
+from
+	openpkw.district_committee;
     
+drop view if exists openpkw.results_district_votes;
 create view openpkw.results_district_votes as
 select 
 	dc.district_committee_id as districtCommitteeId,
@@ -77,6 +80,7 @@ group by
 order by
 	numberOfVotes desc;
 
+drop view if exists openpkw.results_district_frequency;
 create view openpkw.results_district_frequency as
 select 
 	dc.district_committee_id as districtCommitteeId,
@@ -85,6 +89,7 @@ select
 from
 	openpkw.district_committee dc;
        
+drop view if exists openpkw.results_district_protocols;
 create view openpkw.results_district_protocols as
 select 
 	dc.district_committee_id as districtCommitteeId,
@@ -92,3 +97,15 @@ select
     (select count(*) from openpkw.protocol p where p.peripheral_committee_id in (select pc.peripheral_committee_id from openpkw.peripheral_committee pc where pc.district_committee_id = dc.district_committee_id)) as totalProtocols
 from
 	openpkw.district_committee dc;
+    
+drop view if exists openpkw.results_district_peripheral_committees;
+create view openpkw.results_district_peripheral_committees as
+select
+	pc.district_committee_id as districtCommitteeId,
+    pc.territorial_code as territorialCode,
+	pc.peripheral_committee_id as peripheralCommitteeId,
+    pc.peripheral_committee_number as peripheralCommitteeNumber,
+    pc.name as peripheralCommitteeName
+--    (select count(*) from openpkw.protocol p where p.peripheral_committee_id = pc.peripheral_committee_id) as numberOfReceivedProtocols
+from 
+	openpkw.peripheral_committee pc;

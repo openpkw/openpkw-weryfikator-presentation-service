@@ -27,6 +27,10 @@ public class DataController {
     public Result districtCommitteesForCountry() {
         return returnSqlQueryResultAsJson("select * from openpkw.results_country_district_committees;");
     }
+    
+    public Result districtDetails(@PathParam("districtId") int districtId) {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_details where districtCommitteeId = " + districtId + ";");
+    }
 
     public Result votesForDistrict(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_votes where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
