@@ -27,7 +27,7 @@ public class DataController {
     public Result districtCommitteesForCountry() {
         return returnSqlQueryResultAsJson("select * from openpkw.results_country_district_committees;");
     }
-    
+
     public Result districtDetails(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_details where districtCommitteeId = " + districtId + ";");
     }
@@ -35,17 +35,25 @@ public class DataController {
     public Result votesForDistrict(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_votes where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
     }
-    
+
     public Result frequencyForDistrict(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_frequency where districtCommitteeId = " + districtId + ";");
-    }    
+    }
 
     public Result protocolsForDistrict(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_protocols where districtCommitteeId = " + districtId + ";");
-    }    
-    
+    }
+
     public Result peripheralCommitteesForDistrict(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_peripheral_committees where districtCommitteeId = " + districtId + ";");
+    }
+
+    public Result candidatesForDistrict(@PathParam("districtId") int districtId) {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_candidates where districtCommitteeId = " + districtId + ";");
+    }
+
+    public Result electionCommitteesForDistrict(@PathParam("districtId") int districtId) {
+        return returnSqlQueryResultAsJson("select * from openpkw.results_district_election_committees where districtCommitteeId = " + districtId + ";");
     }
 
     private Result returnSqlQueryResultAsJson(String sqlQuery) {

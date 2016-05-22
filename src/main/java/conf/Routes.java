@@ -23,6 +23,8 @@ public class Routes implements ApplicationRoutes {
         router.GET().route("/data/district/{districtId}/votes").with(DataController.class, "votesForDistrict");
         router.GET().route("/data/district/{districtId}/frequency").with(DataController.class, "frequencyForDistrict");
         router.GET().route("/data/district/{districtId}/protocols").with(DataController.class, "protocolsForDistrict");
+        router.GET().route("/data/district/{districtId}/electionCommittees").with(DataController.class, "electionCommitteesForDistrict");
+        router.GET().route("/data/district/{districtId}/candidates").with(DataController.class, "candidatesForDistrict");
         router.GET().route("/data/district/{districtId}/peripheralCommittees").with(DataController.class, "peripheralCommitteesForDistrict");
         
         router.GET().route("/assets/webjars/{fileName: .*}").with(AssetsController.class, "serveWebJars");

@@ -106,6 +106,40 @@ select
 	pc.peripheral_committee_id as peripheralCommitteeId,
     pc.peripheral_committee_number as peripheralCommitteeNumber,
     pc.name as peripheralCommitteeName
---    (select count(*) from openpkw.protocol p where p.peripheral_committee_id = pc.peripheral_committee_id) as numberOfReceivedProtocols
 from 
 	openpkw.peripheral_committee pc;
+
+drop view if exists openpkw.results_district_candidates;
+create view openpkw.results_district_candidates as
+select
+	ecd.district_committee_id as districtCommitteeId,
+	ec.long_name as electionCommitteeName,
+	c.position_on_list as positionOnList,
+	c.name as candidate_name,
+	(select 17) as numberOfVotes,
+	(select 0.23) as percentNumberOfVotes,
+	(select false) as mandate
+from
+	openpkw.candidate c
+left join
+	openpkw.election_committee_district ecd
+on
+	c.election_committee_district_id = ecd.election_committee_district_id
+left join
+	openpkw.election_committee ec
+on
+	ecd.election_committee_id = ec.election_committee_id;    
+	
+drop view if exists openpkw.results_district_election_committees;
+create view openpkw.results_district_election_committees as
+select
+	ecd.district_committee_id as districtCommitteeId,
+	ecd.list_number as listNumber,
+    ec.long_name as electionCommitteeName
+from
+	openpkw.election_committee_district ecd
+left join
+	openpkw.election_committee ec
+on
+	ecd.election_committee_id = ec.election_committee_id;
+
