@@ -3,6 +3,7 @@
 Próba stworzenia mikroserwisu odpowiedzialnego za prezentowanie danych zebranych przez Weryfikator OpenPKW.
 
 ## Założenia
+- Ma działać szybko.
 - Minimalna architektura (żadnych warstw abstrakcji, serwisów, wyrafinowanych wzorców projektowych, ORM-ów itd.).
 - Jak najniższa bariera technologiczna (klasyczne, znane i lubiane technologie, żadnych nowinek, żadnych niszowych wynalazków).
 - Szybki cykl deweloperski (hot-deploy, czyli naciskam CTRL-S w IDE, naciskam F5 w przeglądarce i już mam wyniki).
@@ -28,3 +29,7 @@ mvn ninja:run
 Do uruchomienia potrzebna jest działająca baza openpkw, z użytkownikiem openpkw, z załadowanymi danymi.
 
 jdbc:mysql://localhost/openpkw
+
+## Projekt
+
+https://moqups.com/rafreg/RT9xAvLL
