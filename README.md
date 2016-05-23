@@ -1,4 +1,4 @@
-# OpenPKW Weryfikator Presentation Service
+﻿# OpenPKW Weryfikator Presentation Service
 
 Próba stworzenia mikroserwisu odpowiedzialnego za prezentowanie danych zebranych przez Weryfikator OpenPKW.
 
@@ -41,3 +41,4 @@ https://moqups.com/rafreg/RT9xAvLL
 
 ### Ekran rezultatów dla okręgu wyborczego
 ![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/district_level.png)|
+![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/district_level_02.png)|
