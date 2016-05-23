@@ -135,13 +135,18 @@ create view openpkw.results_district_election_committees as
 select
 	ecd.district_committee_id as districtCommitteeId,
 	ecd.list_number as listNumber,
-    ec.long_name as electionCommitteeName
+    ec.long_name as electionCommitteeName,
+    sum(ecv.vote_number) as numberOfVotes,
+    (select sum(ecv.vote_number) from openpkw.election_committee_vote ecv where ecv.election_committee_district_id in (select ecd1.election_committee_district_id from openpkw.election_committee_district ecd1 where ecd1.district_committee_id = ecd.district_committee_id)) as totalNumberOfVotes
 from
 	openpkw.election_committee_district ecd
 left join
 	openpkw.election_committee ec
 on
-	ecd.election_committee_id = ec.election_committee_id;
-
-select * from openpkw.results_district_peripheral_committees where districtCommitteeId = 700;
-select * from openpkw.results_district_candidates where districtCommitteeId = 700;
+	ecd.election_committee_id = ec.election_committee_id
+left join
+	openpkw.election_committee_vote ecv
+on
+	ecv.election_committee_district_id = ecd.election_committee_district_id
+group by
+	districtCommitteeId, listNumber, electionCommitteeName;

@@ -94,12 +94,13 @@
             return [[
                      entry['listNumber'],
                      entry['electionCommitteeName'],
-                     0,
-                     0
+                     entry['numberOfVotes'],
+                     entry['numberOfVotes'] / entry['totalNumberOfVotes']
                    ]];
             }));
 
         new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
+        new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
         	        
         var table = new google.visualization.Table(document.getElementById('electionCommitteesTable'));
         var options = {
