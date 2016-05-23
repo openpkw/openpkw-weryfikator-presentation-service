@@ -40,5 +40,5 @@ https://moqups.com/rafreg/RT9xAvLL
 ![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/country_level.png)|
 
 ### Ekran rezultatów dla okręgu wyborczego
-![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/district_level.png)|
+![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/district_level_01.png)|
 ![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/district_level_02.png)|
