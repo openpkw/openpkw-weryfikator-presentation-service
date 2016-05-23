@@ -115,9 +115,9 @@ select
 	ecd.district_committee_id as districtCommitteeId,
 	ec.long_name as electionCommitteeName,
 	c.position_on_list as positionOnList,
-	c.name as candidate_name,
-	(select 17) as numberOfVotes,
-	(select 0.23) as percentNumberOfVotes,
+	concat(c.name, ' ', c.surname) as candidateName,
+	(select 0) as numberOfVotes,
+	(select 0) as percentNumberOfVotes,
 	(select false) as mandate
 from
 	openpkw.candidate c
@@ -143,3 +143,5 @@ left join
 on
 	ecd.election_committee_id = ec.election_committee_id;
 
+select * from openpkw.results_district_peripheral_committees where districtCommitteeId = 700;
+select * from openpkw.results_district_candidates where districtCommitteeId = 700;
