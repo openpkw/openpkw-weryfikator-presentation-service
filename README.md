@@ -33,3 +33,11 @@ jdbc:mysql://localhost/openpkw
 ## Projekt
 
 https://moqups.com/rafreg/RT9xAvLL
+
+## Stan obecny
+
+### Ekran rezultatów dla całego kraju
+![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/country_level.png)|
+
+### Ekran rezultatów dla okręgu wyborczego
+![Poziom kraju](https://raw.githubusercontent.com/openpkw/openpkw-weryfikator-presentation-service/master/doc/district_level.png)|
