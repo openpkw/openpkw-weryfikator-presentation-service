@@ -20,11 +20,13 @@
         data.addColumn('string', 'Komited wyborczy');
         data.addColumn('number', 'Procent otrzymanych głosów');
         data.addRows($.map(jsonData, function(entry) {
-            return [[entry['electionCommittee'], entry['numberOfVotes']]];
+            return [[entry['electionCommittee'], entry['numberOfVotes'] / entry['totalNumberOfVotes']]];
             }));
         
          var view = new google.visualization.DataView(data);
          view.setColumns([0, 1]);
+
+         new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 1);         
 
          var options = {
            title: "Wyniki wyborcze w skali kraju",
@@ -32,7 +34,8 @@
            height: 600,
            bar: {groupWidth: "95%"},
            legend: { position: "none" },
-           hAxis: {slantedText:true, slantedTextAngle:45}
+           hAxis: {slantedText:true, slantedTextAngle:45},
+           vAxis: {format:'0%'}
          };
                   
     	 var chart = new google.visualization.ColumnChart(document.getElementById("votingResultsChart"));

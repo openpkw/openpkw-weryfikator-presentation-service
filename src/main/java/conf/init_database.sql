@@ -16,7 +16,8 @@ drop view if exists openpkw.results_country_votes;
 create view openpkw.results_country_votes as
 select 
 	ec.symbol as electionCommittee,
-	sum(ecv.vote_number) as numberOfVotes
+	sum(ecv.vote_number) as numberOfVotes,
+	(select sum(vote_number) from openpkw.election_committee_vote) as totalNumberOfVotes
 from 
 	openpkw.election_committee_vote ecv
 left join
@@ -26,7 +27,7 @@ on
 left join
 	openpkw.election_committee ec
 on ecd.election_committee_id = ec.election_committee_id
-group by ecd.election_committee_id
+group by ecd.election_committee_id, totalNumberOfVotes
 order by numberOfVotes desc;
 
 drop view if exists openpkw.results_country_district_committees;
@@ -60,7 +61,8 @@ create view openpkw.results_district_votes as
 select 
 	dc.district_committee_id as districtCommitteeId,
 	ec.symbol as electionCommittee,
-	sum(ecv.vote_number) as numberOfVotes
+	sum(ecv.vote_number) as numberOfVotes,
+    (select sum(ecv1.vote_number) from openpkw.election_committee_vote ecv1 where ecv1.election_committee_district_id in (select ecd1.election_committee_district_id from openpkw.election_committee_district ecd1 where ecd.district_committee_id = ecd1.district_committee_id)) as totalNumberOfVotes
 from 
 	openpkw.election_committee_vote ecv
 left join
