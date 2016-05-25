@@ -31,7 +31,7 @@ public class DBUtils {
         try {
             String timezone = TimeZone.getDefault().getID().toString();
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?user=openpkw&password=lwejlr2k3jlsfedlk2j34&serverTimezone=" + timezone+"&allowMultiQueries=true");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?user=openpkw&password=lwejlr2k3jlsfedlk2j34&serverTimezone=" + timezone + "&allowMultiQueries=true");
             return connection;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create connection to the database: " + ex.getMessage(), ex);
@@ -50,10 +50,12 @@ public class DBUtils {
     }
 
     public ResultSet executeQuery(String sqlQuery) {
-        System.out.println(sqlQuery);
+        long startTime = System.currentTimeMillis();
         try {
             Statement stmt = getConnection().createStatement();
             ResultSet rs = stmt.executeQuery(sqlQuery);
+            long endTime = System.currentTimeMillis();
+            System.out.println(sqlQuery + " (" + (endTime - startTime + " ms)"));
             return rs;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to execute query [" + sqlQuery + "]: " + ex.getMessage(), ex);
