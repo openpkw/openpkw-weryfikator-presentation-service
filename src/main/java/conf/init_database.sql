@@ -147,8 +147,15 @@ create view openpkw.results_district_peripheral_committees as
 select
     pc.district_committee_id as districtCommitteeId,
     pc.territorial_code as territorialCode,
-    pc.PERIPHERAL_COMMITTEE_id as peripheralCommitteeId,
-    pc.PERIPHERAL_COMMITTEE_number as peripheralCommitteeNumber,
-    pc.name as peripheralCommitteeName
+    pc.peripheral_committee_id as peripheralCommitteeId,
+    pc.peripheral_committee_number as peripheralCommitteeNumber,
+    pc.name as peripheralCommitteeName,
+    pc.allowed_to_vote as allowedToVote,
+    p.cards_given as cardsGiven,
+    p.invalid_votes as invalidVotes
 from 
-    openpkw.PERIPHERAL_COMMITTEE pc;    
+    openpkw.PERIPHERAL_COMMITTEE pc
+left join
+	openpkw.Protocol p
+on
+	pc.peripheral_committee_id = p.peripheral_committee_id;

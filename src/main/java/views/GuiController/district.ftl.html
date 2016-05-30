@@ -154,17 +154,17 @@
         data.addColumn('number', 'Liczba uprawnionych');
         data.addColumn('number', 'Liczba kart wydanych');
         data.addColumn('number', 'Frekwencja');
-        data.addColumn('number', 'liczba głosów nieważnych');
+        data.addColumn('number', 'Liczba głosów nieważnych');
 
         data.addRows($.map(jsonData, function(entry) {
             return [[
                      entry['territorialCode'],
-                     0,
+                     entry['peripheralCommitteeNumber'],
                      entry['peripheralCommitteeName'],
-                     0,
-                     0,
-                     0,
-                     0
+                     entry['allowedToVote'],
+                     entry['cardsGiven'],
+                     entry['cardsGiven'] / entry['allowedToVote'],
+                     entry['invalidVotes']
                    ]];
             }));
 
