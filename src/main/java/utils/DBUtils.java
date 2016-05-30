@@ -4,35 +4,50 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.TimeZone;
 
 import javax.inject.Singleton;
+import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Singleton
 public class DBUtils {
 
-    private Connection connection;
+    private DataSource dataSource;
 
     private synchronized Connection getConnection() {
-        if (connection == null) {
-            connection = createConnection();
+        if (dataSource == null) {
+            dataSource = createDataSource();
             initializeViews();
         }
-        return connection;
+        try {
+            return dataSource.getConnection();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to obtain a Connection from the data source: " + ex.getMessage(), ex);
+        }
     }
 
-    private synchronized Connection createConnection() {
+    private synchronized DataSource createDataSource() {
         try {
             String timezone = TimeZone.getDefault().getID().toString();
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?user=openpkw&password=lwejlr2k3jlsfedlk2j34&serverTimezone=" + timezone + "&allowMultiQueries=true");
-            return connection;
+
+            BasicDataSource ds = new BasicDataSource();
+            ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            ds.setUsername("openpkw");
+            ds.setPassword("lwejlr2k3jlsfedlk2j34");
+            ds.setUrl("jdbc:mysql://localhost/openpkw");
+            ds.setMinIdle(5);
+            ds.setMaxIdle(20);
+            ds.setMaxOpenPreparedStatements(20);
+            ds.setConnectionProperties("serverTimezone=" + timezone + ";allowMultiQueries=true;useSSL=false");
+
+            return ds;
+
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create connection to the database: " + ex.getMessage(), ex);
         }
@@ -40,10 +55,12 @@ public class DBUtils {
 
     private void initializeViews() {
         try {
+            System.out.println("Configuring views");
             String databaseInitializationFileName = "conf/init_database.sql";
             Path databaseInitializationFile = Paths.get(ClassLoader.getSystemResource(databaseInitializationFileName).toURI());
             String databaseInitializationScript = new String(Files.readAllBytes(databaseInitializationFile));
             getConnection().createStatement().execute(databaseInitializationScript);
+            System.out.println("Views configuration complete");
         } catch (Exception ex) {
             throw new RuntimeException("Failed to initialize database views: " + ex.getMessage(), ex);
         }

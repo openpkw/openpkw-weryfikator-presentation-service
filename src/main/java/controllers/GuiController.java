@@ -16,7 +16,6 @@ public class GuiController {
     public Result district(@PathParam("districtId") int districtId) {
         Result result = Results.html();
         result.render("districtCommitteeId", districtId);
-        result.render("districtCommitteeName", "Elemelek");
         return result;
     }
 }
