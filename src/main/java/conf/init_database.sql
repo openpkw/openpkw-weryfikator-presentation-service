@@ -106,9 +106,10 @@ select
     ecd.district_committee_id as districtCommitteeId,
     ec.long_name as electionCommitteeName,
     c.position_on_list as positionOnList,
+    c.id as candidateId,
     concat(c.name, ' ', c.surname) as candidateName,
-    (select 0) as numberOfVotes,
-    (select 0) as percentNumberOfVotes,
+    (select sum(v.CANDIDATES_VOTES_NUMBER) from openpkw.VOTE v where v.candidate_id = c.id) as numberOfVotes,
+    (select sum(v.CANDIDATES_VOTES_NUMBER) from openpkw.VOTE v where v.candidate_id in (select id from openpkw.CANDIDATE where election_committee_district_id in (select election_committee_district_id from openpkw.ELECTION_COMMITTEE_DISTRICT where district_committee_id = ecd.district_committee_id))) as totalNumberOfVotes,
     (select false) as mandate
 from
     openpkw.CANDIDATE c
@@ -119,7 +120,7 @@ on
 join
     openpkw.ELECTION_COMMITTEE ec
 on
-    ecd.election_committee_id = ec.election_committee_id;    
+    ecd.election_committee_id = ec.election_committee_id;
     
 drop view if exists openpkw.results_district_election_committees;
 create view openpkw.results_district_election_committees as

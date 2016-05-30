@@ -129,12 +129,13 @@
                      entry['positionOnList'],
                      entry['candidateName'],
                      entry['numberOfVotes'],
-                     entry['percentNumberOfVotes'],
+                     entry['numberOfVotes'] / entry['totalNumberOfVotes'],
                      entry['mandate'] == 1
                    ]];
             }));
 
         new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
+        new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 4);
         	        
         var table = new google.visualization.Table(document.getElementById('candidatesTable'));
         var options = {
