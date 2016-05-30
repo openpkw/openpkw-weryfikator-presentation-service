@@ -82,15 +82,6 @@ group by
 order by
     numberOfVotes desc;
 
-drop view if exists openpkw.results_district_frequency;
-create view openpkw.results_district_frequency as
-select 
-    dc.district_committee_id as districtCommitteeId,
-    (select sum(allowed_to_vote) from openpkw.PERIPHERAL_COMMITTEE pc where pc.district_committee_id = dc.district_committee_id) as allowedToVote,
-    (select sum(ecv.vote_number) from openpkw.ELECTION_COMMITTEE_VOTE ecv where ecv.ELECTION_COMMITTEE_DISTRICT_id in (select ecd.ELECTION_COMMITTEE_DISTRICT_id from openpkw.ELECTION_COMMITTEE_DISTRICT ecd where ecd.district_committee_id = dc.district_committee_id)) as voters
-from
-    openpkw.DISTRICT_COMMITTEE dc;
-       
 drop view if exists openpkw.results_district_protocols;
 create view openpkw.results_district_protocols as
 select 
@@ -100,17 +91,15 @@ select
 from
     openpkw.DISTRICT_COMMITTEE dc;
     
-drop view if exists openpkw.results_district_peripheral_committees;
-create view openpkw.results_district_peripheral_committees as
-select
-    pc.district_committee_id as districtCommitteeId,
-    pc.territorial_code as territorialCode,
-    pc.PERIPHERAL_COMMITTEE_id as peripheralCommitteeId,
-    pc.PERIPHERAL_COMMITTEE_number as peripheralCommitteeNumber,
-    pc.name as peripheralCommitteeName
-from 
-    openpkw.PERIPHERAL_COMMITTEE pc;
-
+drop view if exists openpkw.results_district_frequency;
+create view openpkw.results_district_frequency as
+select 
+    dc.district_committee_id as districtCommitteeId,
+    (select sum(allowed_to_vote) from openpkw.PERIPHERAL_COMMITTEE pc where pc.district_committee_id = dc.district_committee_id) as allowedToVote,
+    (select sum(ecv.vote_number) from openpkw.ELECTION_COMMITTEE_VOTE ecv where ecv.ELECTION_COMMITTEE_DISTRICT_id in (select ecd.ELECTION_COMMITTEE_DISTRICT_id from openpkw.ELECTION_COMMITTEE_DISTRICT ecd where ecd.district_committee_id = dc.district_committee_id)) as voters
+from
+    openpkw.DISTRICT_COMMITTEE dc;
+       
 drop view if exists openpkw.results_district_candidates;
 create view openpkw.results_district_candidates as
 select
@@ -152,3 +141,14 @@ on
     ecv.ELECTION_COMMITTEE_DISTRICT_id = ecd.ELECTION_COMMITTEE_DISTRICT_id
 group by
     districtCommitteeId, listNumber, electionCommitteeName;
+    
+drop view if exists openpkw.results_district_peripheral_committees;
+create view openpkw.results_district_peripheral_committees as
+select
+    pc.district_committee_id as districtCommitteeId,
+    pc.territorial_code as territorialCode,
+    pc.PERIPHERAL_COMMITTEE_id as peripheralCommitteeId,
+    pc.PERIPHERAL_COMMITTEE_number as peripheralCommitteeNumber,
+    pc.name as peripheralCommitteeName
+from 
+    openpkw.PERIPHERAL_COMMITTEE pc;    
