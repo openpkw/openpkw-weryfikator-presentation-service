@@ -121,6 +121,9 @@ public class DBUtils {
                         obj.put(column_name, rs.getObject(column_name));
                         break;
                     }
+                    if (rs.wasNull()) {
+                        obj.put(column_name, JSONObject.NULL);
+                    }
                 }
 
                 json.put(obj);
