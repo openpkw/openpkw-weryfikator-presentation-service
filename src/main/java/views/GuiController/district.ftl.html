@@ -164,12 +164,12 @@
                      entry['allowedToVote'],
                      entry['cardsGiven'],
                      entry['cardsGiven'] / entry['allowedToVote'],
-                     entry['invalidVotes']
+                     entry['invalidVotes'] != undefined ? parseInt(entry['invalidVotes']) : 0 
                    ]];
             }));
 
         new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
-//        new google.visualization.NumberFormat({pattern: '0.0%'}).format(data, 3);
+        new google.visualization.NumberFormat({pattern: '0%'}).format(data, 5);
                     
         var table = new google.visualization.Table(document.getElementById('peripheralCommitteesTable'));
         var options = {
