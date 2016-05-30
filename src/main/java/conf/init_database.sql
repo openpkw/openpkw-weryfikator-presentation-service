@@ -100,8 +100,8 @@ select
 from
     openpkw.DISTRICT_COMMITTEE dc;
     
-drop view if exists openpkw.results_district_PERIPHERAL_COMMITTEEs;
-create view openpkw.results_district_PERIPHERAL_COMMITTEEs as
+drop view if exists openpkw.results_district_peripheral_committees;
+create view openpkw.results_district_peripheral_committees as
 select
     pc.district_committee_id as districtCommitteeId,
     pc.territorial_code as territorialCode,
