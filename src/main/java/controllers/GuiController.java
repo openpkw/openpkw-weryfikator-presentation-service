@@ -18,4 +18,10 @@ public class GuiController {
         result.render("districtCommitteeId", districtId);
         return result;
     }
+    
+    public Result periphery(@PathParam("peripheryId") int peripheryId) {
+        Result result = Results.html();
+        result.render("peripheralCommitteeId", peripheryId);
+        return result;
+    }    
 }

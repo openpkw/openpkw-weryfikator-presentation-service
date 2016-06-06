@@ -160,3 +160,19 @@ left join
 	openpkw.Protocol p
 on
 	pc.peripheral_committee_id = p.peripheral_committee_id;
+    
+    
+-- periphery level
+
+drop procedure if exists openpkw.getPeripheryDetails;
+create procedure openpkw.getPeripheryDetails(in peripheralCommitteeId int)
+begin
+	select
+		pc.peripheral_committee_number as peripheralCommitteeNumber,
+		pc.name as peripheralCommitteeName,
+        pc.territorial_code as territorialCode
+	from
+		openpkw.PERIPHERAL_COMMITTEE pc
+	where
+		pc.peripheral_committee_id = peripheralCommitteeId;
+end

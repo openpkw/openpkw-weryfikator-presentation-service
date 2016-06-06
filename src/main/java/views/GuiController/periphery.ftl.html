@@ -8,20 +8,19 @@
     google.charts.load('current', {'packages':['corechart', 'table']});
     google.charts.setOnLoadCallback(drawCharts);
 
-    var districtCommitteeId = ${districtCommitteeId}
+    var peripheralCommitteeId = ${peripheralCommitteeId}
 
     function drawCharts() {
-    	$.getJSON('/data/district/' + districtCommitteeId, function (data) { displayDistrictDetails(data);});
-        $.getJSON('/data/district/' + districtCommitteeId + "/votes", function (data) { drawVotingResultsChart(data);});
-        $.getJSON('/data/district/' + districtCommitteeId + "/protocols", function (data) { drawReceivedProtocolsChart(data);});
-    	$.getJSON('/data/district/' + districtCommitteeId + "/frequency", function (data) { drawFrequencyChart(data);});
-    	$.getJSON('/data/district/' + districtCommitteeId + "/electionCommittees", function (data) { drawElectionCommitteesTable(data);});
-    	$.getJSON('/data/district/' + districtCommitteeId + "/candidates", function (data) { drawCandidatesTable(data);});
-        $.getJSON('/data/district/' + districtCommitteeId + "/peripheralCommittees", function(data) { drawPeripheralCommitteesTable(data);});
+    	$.getJSON('/data/periphery/' + peripheralCommitteeId, function (data) { displayPeripheryDetails(data);});
+        $.getJSON('/data/periphery/' + peripheralCommitteeId + "/votes", function (data) { drawVotingResultsChart(data);});
+        $.getJSON('/data/periphery/' + peripheralCommitteeId + "/protocols", function (data) { drawReceivedProtocolsChart(data);});
+    	$.getJSON('/data/periphery/' + peripheralCommitteeId + "/frequency", function (data) { drawFrequencyChart(data);});
+    	$.getJSON('/data/periphery/' + peripheralCommitteeId + "/electionCommittees", function (data) { drawElectionCommitteesTable(data);});
+    	$.getJSON('/data/periphery/' + peripheralCommitteeId + "/candidates", function (data) { drawCandidatesTable(data);});
     }
 
-    function displayDistrictDetails(jsonData) {
-        $('#districtDetails').html(jsonData[0]['districtName']);
+    function displayPeripheryDetails(jsonData) {
+        $('#peripheryDetails').html("Obwód nr " + jsonData[0]['peripheralCommitteeNumber'] + ": " + jsonData[0]['peripheralCommitteeName']);
     }
 
     function drawVotingResultsChart(jsonData) {
@@ -146,48 +145,10 @@
         };
         table.draw(data, options);
     }
-    
-    function drawPeripheralCommitteesTable(jsonData) {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Kod terytorialny gminy');
-        data.addColumn('number', 'Nr komisji');
-        data.addColumn('string', 'Adres Komisji Obwodowej');
-        data.addColumn('number', 'Liczba uprawnionych');
-        data.addColumn('number', 'Liczba kart wydanych');
-        data.addColumn('number', 'Frekwencja');
-        data.addColumn('number', 'Liczba głosów nieważnych');
-        data.addColumn('string', 'Szczegóły');        
-
-        data.addRows($.map(jsonData, function(entry) {
-            return [[
-                     entry['territorialCode'],
-                     entry['peripheralCommitteeNumber'],
-                     entry['peripheralCommitteeName'],
-                     entry['allowedToVote'],
-                     entry['cardsGiven'],
-                     entry['cardsGiven'] / entry['allowedToVote'],
-                     entry['invalidVotes'] != undefined ? parseInt(entry['invalidVotes']) : null,
-                     "" + entry['peripheralCommitteeId']                              
-                   ]];
-            }));
-
-        new google.visualization.NumberFormat({pattern: '#'}).format(data, 0);
-        new google.visualization.NumberFormat({pattern: '0%'}).format(data, 5);
-        new google.visualization.PatternFormat('<a href="/periphery/{0}">Szczegóły</a>').format(data, [7]);        
-                    
-        var table = new google.visualization.Table(document.getElementById('peripheralCommitteesTable'));
-        var options = {
-                showRowNumber: false, 
-                width: '100%', 
-                height: '100%',
-                page : true,
-                allowHtml: true
-        };
-        table.draw(data, options);
-    }    
+   
 </script>
 
-<h2 id="districtDetails"></h2>
+<h2 id="peripheryDetails"></h2>
     
 <table>
     <tr>

@@ -41,7 +41,7 @@ public class DBUtils {
             ds.setUsername("openpkw");
             ds.setPassword("lwejlr2k3jlsfedlk2j34");
             ds.setUrl("jdbc:mysql://localhost/openpkw");
-            ds.setMinIdle(5);
+            ds.setMinIdle(10);
             ds.setMaxIdle(20);
             ds.setMaxOpenPreparedStatements(20);
             ds.setConnectionProperties("serverTimezone=" + timezone + ";allowMultiQueries=true;useSSL=false");
@@ -92,7 +92,7 @@ public class DBUtils {
                 JSONObject obj = new JSONObject();
 
                 for (int i = 1; i < numColumns + 1; i++) {
-                    String column_name = rs.getMetaData().getColumnName(i);
+                    String column_name = rs.getMetaData().getColumnLabel(i);
 
                     switch (rs.getMetaData().getColumnType(i)) {
                     case java.sql.Types.ARRAY:
