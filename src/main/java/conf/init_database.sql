@@ -175,4 +175,12 @@ begin
 		openpkw.PERIPHERAL_COMMITTEE pc
 	where
 		pc.peripheral_committee_id = peripheralCommitteeId;
-end
+end;
+
+drop procedure if exists openpkw.getPeripheryFrequency;
+create procedure openpkw.getPeripheryFrequency(in peripheralCommitteeId int)
+begin
+	select
+		(select sum(ecv.vote_number) from openpkw.ELECTION_COMMITTEE_VOTE ecv where ecv.PROTOCOL_ID in (select p.protocol_id from openpkw.PROTOCOL p where p.peripheral_committee_id = peripheralCommitteeId)) as voters,
+	    (select pc.allowed_to_vote from openpkw.PERIPHERAL_COMMITTEE pc where pc.peripheral_committee_id = peripheralCommitteeId) as allowedToVote;
+end;

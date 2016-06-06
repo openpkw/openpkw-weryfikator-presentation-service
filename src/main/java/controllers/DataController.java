@@ -56,36 +56,30 @@ public class DataController {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_election_committees where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
     }
 
- 
     public Result peripheryDetails(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("call openpkw.getPeripheryDetails("+peripheryId+");");
+        return returnSqlQueryResultAsJson("call openpkw.getPeripheryDetails(" + peripheryId + ");");
     }
 
-    /*
     public Result votesForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_votes where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
+        return returnSqlQueryResultAsJson("call openpkw.getPeripheryVotes(" + peripheryId + ");");
     }
 
     public Result frequencyForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_frequency where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("call openpkw.getPeripheryFrequency(" + peripheryId + ");");
     }
 
     public Result protocolsForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_protocols where districtCommitteeId = " + districtId + ";");
-    }
-
-    public Result peripheralCommitteesForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_peripheral_committees where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("call openpkw.getPeripheryProtocols(" + peripheryId + ");");
     }
 
     public Result candidatesForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_candidates where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
+        return returnSqlQueryResultAsJson("call openpkw.getPeripheryCandidates(" + peripheryId + ");");
     }
 
     public Result electionCommitteesForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_election_committees where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
+        return returnSqlQueryResultAsJson("call openpkw.getPeripheryElectionCommittees(" + peripheryId + ");");
     }
-    */
+
     private Result returnSqlQueryResultAsJson(String sqlQuery) {
         try {
             String jsonResult = dbUtils.executeQueryAndReturnJSON(sqlQuery);
