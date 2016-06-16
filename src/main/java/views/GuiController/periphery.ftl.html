@@ -13,7 +13,6 @@
     function drawCharts() {
     	$.getJSON('/data/periphery/' + peripheralCommitteeId, function (data) { displayPeripheryDetails(data);});
         $.getJSON('/data/periphery/' + peripheralCommitteeId + "/votes", function (data) { drawVotingResultsChart(data);});
-        $.getJSON('/data/periphery/' + peripheralCommitteeId + "/protocols", function (data) { drawReceivedProtocolsChart(data);});
     	$.getJSON('/data/periphery/' + peripheralCommitteeId + "/frequency", function (data) { drawFrequencyChart(data);});
     	$.getJSON('/data/periphery/' + peripheralCommitteeId + "/electionCommittees", function (data) { drawElectionCommitteesTable(data);});
     	$.getJSON('/data/periphery/' + peripheralCommitteeId + "/candidates", function (data) { drawCandidatesTable(data);});
@@ -48,24 +47,6 @@
                   
     	 var chart = new google.visualization.ColumnChart(document.getElementById("votingResultsChart"));
          chart.draw(view, options);
-    }
-
-    function drawReceivedProtocolsChart(jsonData) {
-        var totalProtocols = jsonData[0]['totalProtocols'];
-        var totalPeripheralCommittees = jsonData[0]['totalPeripheralCommittees'];
-
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Category');
-        data.addColumn('number', 'Number of protocols');
-        data.addRows([
-          ['Otrzymane', totalProtocols],
-          ['Nieotrzymane', totalPeripheralCommittees - totalProtocols]
-        ]);
-
-        var options = {'title':'Liczba otrzymanych protokołów wyborczych dla okręgu', 'width':400, 'height':300, 'legend' : {position:'bottom'}};
-
-        var chart = new google.visualization.PieChart(document.getElementById('receivedProtocolsChart'));
-        chart.draw(data, options);
     }
 
     function drawFrequencyChart(jsonData) {
@@ -152,15 +133,10 @@
     
 <table>
     <tr>
-        <td rowspan="2"><div id="votingResultsChart">[Czekaj...]</div></td>
-        <td><div id="receivedProtocolsChart">[Czekaj...]</div></td>
-    </tr>
-    <tr>
+        <td><div id="votingResultsChart">[Czekaj...]</div></td>
         <td><div id="frequencyChart">[Czekaj...]</div></td>
     </tr>
     <tr>
-        <td></td>
-    </tr>
 </table>
 
 <h3>Komitety wyborcze</h3>
@@ -168,8 +144,5 @@
 
 <h3>Kandydaci</h3>
 <div id="candidatesTable">[Czekaj...]</div>
-
-<h3>Obwody wyborcze</h3>
-<div id="peripheralCommitteesTable">[Czekaj...]</div>
 
 </@layout.myLayout>

@@ -68,10 +68,6 @@ public class DataController {
         return returnSqlQueryResultAsJson("call openpkw.getPeripheryFrequency(" + peripheryId + ");");
     }
 
-    public Result protocolsForPeriphery(@PathParam("peripheryId") int peripheryId) {
-        return returnSqlQueryResultAsJson("call openpkw.getPeripheryProtocols(" + peripheryId + ");");
-    }
-
     public Result candidatesForPeriphery(@PathParam("peripheryId") int peripheryId) {
         return returnSqlQueryResultAsJson("call openpkw.getPeripheryCandidates(" + peripheryId + ");");
     }
