@@ -185,6 +185,29 @@ begin
 	    (select pc.allowed_to_vote from openpkw.PERIPHERAL_COMMITTEE pc where pc.peripheral_committee_id = peripheralCommitteeId) as allowedToVote;
 end;
 
+drop procedure if exists openpkw.getPeripheryVotes;
+create procedure openpkw.getPeripheryVotes(in peripheralCommitteeId int)
+begin
+	select 
+		ec.symbol as electionCommittee,
+		ecv.vote_number as numberOfVotes,
+		(select sum(ecv1.vote_number) from openpkw.ELECTION_COMMITTEE_VOTE ecv1 where PROTOCOL_ID = (select p.PROTOCOL_ID from openpkw.PROTOCOL p where p.PERIPHERAL_COMMITTEE_ID = peripheralCommitteeId)) as totalNumberOfVotes
+	from 
+		openpkw.ELECTION_COMMITTEE_VOTE ecv 
+	left join
+		openpkw.ELECTION_COMMITTEE_DISTRICT ecd
+	on
+		ecv.ELECTION_COMMITTEE_DISTRICT_ID = ecd.ELECTION_COMMITTEE_DISTRICT_ID
+	left join
+		openpkw.ELECTION_COMMITTEE ec
+	on
+		ecd.ELECTION_COMMITTEE_ID = ec.ELECTION_COMMITTEE_ID
+	where 
+		ecv.PROTOCOL_ID = (select p.PROTOCOL_ID from openpkw.PROTOCOL p where p.PERIPHERAL_COMMITTEE_ID = peripheralCommitteeId)
+	order by
+		numberOfVotes desc;
+end; 
+
 drop procedure if exists openpkw.getPeripheryElectionCommittees;
 create procedure openpkw.getPeripheryElectionCommittees(in peripheralCommitteeId int)
 begin

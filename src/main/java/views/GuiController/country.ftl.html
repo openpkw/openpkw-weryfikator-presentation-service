@@ -17,7 +17,7 @@
 
     function drawVotingResultsChart(jsonData) {
         var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Komited wyborczy');
+        data.addColumn('string', 'Komitet wyborczy');
         data.addColumn('number', 'Procent otrzymanych głosów');
         data.addRows($.map(jsonData, function(entry) {
             return [[entry['electionCommittee'], entry['numberOfVotes'] / entry['totalNumberOfVotes']]];
