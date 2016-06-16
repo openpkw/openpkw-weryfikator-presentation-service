@@ -208,3 +208,34 @@ begin
 	order by
 		numberOfVotes desc;
 end; 
+
+drop procedure if exists openpkw.getPeripheryCandidates;
+create procedure openpkw.getPeripheryCandidates(in peripheralCommitteeId int)
+begin
+	select
+		ec.long_name as electionCommitteeName,
+		c.position_on_list as positionOnList,
+		c.id as candidateId,
+		concat(c.name, ' ', c.surname) as candidateName,
+		v.CANDIDATES_VOTES_NUMBER as numberOfVotes,
+		(select sum(CANDIDATES_VOTES_NUMBER) from openpkw.VOTE where PROTOCOL_ID = (select p.PROTOCOL_ID from openpkw.PROTOCOL p where p.PERIPHERAL_COMMITTEE_ID = peripheralCommitteeId)) as totalNumberOfVotes,
+		(select false) as mandate   
+	from
+		openpkw.VOTE v 
+	left join
+		openpkw.CANDIDATE c
+	on
+		v.CANDIDATE_ID = c.ID
+		join
+			openpkw.ELECTION_COMMITTEE_DISTRICT ecd
+		on
+			c.ELECTION_COMMITTEE_DISTRICT_id = ecd.ELECTION_COMMITTEE_DISTRICT_id
+		join
+			openpkw.ELECTION_COMMITTEE ec
+		on
+			ecd.election_committee_id = ec.election_committee_id
+	where
+		v.PROTOCOL_ID = (select p.PROTOCOL_ID from openpkw.PROTOCOL p where p.PERIPHERAL_COMMITTEE_ID = peripheralCommitteeId)
+	order by
+		numberOfVotes desc;
+end;
