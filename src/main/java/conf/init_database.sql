@@ -1,50 +1,58 @@
 -- country level
 
-drop view if exists openpkw.results_country_frequency;
-create view openpkw.results_country_frequency as 
+drop procedure if exists openpkw.getCountryFrequency;
+create procedure getCountryFrequency()
+begin
     select 
         (select sum(vote_number) from openpkw.ELECTION_COMMITTEE_VOTE) as voters, 
         (select sum(allowed_to_vote) from openpkw.PERIPHERAL_COMMITTEE) as allowedToVote;
+end;
         
-drop view if exists openpkw.results_country_protocols;
-create view openpkw.results_country_protocols as 
+drop procedure if exists openpkw.getCountryProtocols;
+create procedure openpkw.getCountryProtocols()
+begin
     select 
         (select count(*) from openpkw.PERIPHERAL_COMMITTEE) as totalPeripheralCommittees, 
         (select count(*) from openpkw.PROTOCOL) as totalProtocols;
+end;
 
-drop view if exists openpkw.results_country_votes;
-create view openpkw.results_country_votes as
-select 
-    ec.symbol as electionCommittee,
-    sum(ecv.vote_number) as numberOfVotes,
-    (select sum(vote_number) from openpkw.ELECTION_COMMITTEE_VOTE) as totalNumberOfVotes
-from 
-    openpkw.ELECTION_COMMITTEE_VOTE ecv
-join
-    openpkw.ELECTION_COMMITTEE_DISTRICT ecd
-on 
-    ecd.ELECTION_COMMITTEE_DISTRICT_id = ecv.ELECTION_COMMITTEE_DISTRICT_id
-join
-    openpkw.ELECTION_COMMITTEE ec
-on ecd.election_committee_id = ec.election_committee_id
-group by ecd.election_committee_id, totalNumberOfVotes
-order by numberOfVotes desc;
-
-drop view if exists openpkw.results_country_district_committees;
-create view openpkw.results_country_district_committees as
-select
-    dc.district_committee_id,
-    dc.district_committee_number,
-    dc.name,
-    dca.city,
-    (select count(pc.PERIPHERAL_COMMITTEE_id) from openpkw.PERIPHERAL_COMMITTEE pc where pc.district_committee_id = dc.district_committee_id) as numberOfPeripherals,
-    (select count(*) from openpkw.ELECTION_COMMITTEE_VOTE ecv where ecv.ELECTION_COMMITTEE_DISTRICT_id in (select ecd.ELECTION_COMMITTEE_DISTRICT_id from openpkw.ELECTION_COMMITTEE_DISTRICT ecd where ecd.district_committee_id = dc.district_committee_id)) as numberOfReceivedProtocols
-from 
-    openpkw.DISTRICT_COMMITTEE dc
-join
-    openpkw.DISTRICT_COMMITTEE_ADDRESS dca
-on
-    dc.district_committee_address_id = dca.district_committee_address_id;
+drop procedure if exists openpkw.getCountryVotes;
+create procedure openpkw.getCountryVotes()
+begin
+	select 
+	    ec.symbol as electionCommittee,
+	    sum(ecv.vote_number) as numberOfVotes,
+	    (select sum(vote_number) from openpkw.ELECTION_COMMITTEE_VOTE) as totalNumberOfVotes
+	from 
+	    openpkw.ELECTION_COMMITTEE_VOTE ecv
+	join
+	    openpkw.ELECTION_COMMITTEE_DISTRICT ecd
+	on 
+	    ecd.ELECTION_COMMITTEE_DISTRICT_id = ecv.ELECTION_COMMITTEE_DISTRICT_id
+	join
+	    openpkw.ELECTION_COMMITTEE ec
+	on ecd.election_committee_id = ec.election_committee_id
+	group by ecd.election_committee_id, totalNumberOfVotes
+	order by numberOfVotes desc;
+end;
+	
+drop procedure if exists openpkw.getCountryDistrictCommittees;
+create procedure openpkw.getCountryDistrictCommittees()
+begin
+	select
+	    dc.district_committee_id,
+	    dc.district_committee_number,
+	    dc.name,
+	    dca.city,
+	    (select count(pc.PERIPHERAL_COMMITTEE_id) from openpkw.PERIPHERAL_COMMITTEE pc where pc.district_committee_id = dc.district_committee_id) as numberOfPeripherals,
+	    (select count(*) from openpkw.ELECTION_COMMITTEE_VOTE ecv where ecv.ELECTION_COMMITTEE_DISTRICT_id in (select ecd.ELECTION_COMMITTEE_DISTRICT_id from openpkw.ELECTION_COMMITTEE_DISTRICT ecd where ecd.district_committee_id = dc.district_committee_id)) as numberOfReceivedProtocols
+	from 
+	    openpkw.DISTRICT_COMMITTEE dc
+	join
+	    openpkw.DISTRICT_COMMITTEE_ADDRESS dca
+	on
+	    dc.district_committee_address_id = dca.district_committee_address_id;
+end;	  
 
 -- district level
 
@@ -59,13 +67,12 @@ begin
 		district_committee_id = districtCommitteeId;
 end;
     
-drop view if exists openpkw.results_district_votes;
-create view openpkw.results_district_votes as
+drop procedure if exists openpkw.getDistrictVotes;
+create procedure getDistrictVotes(in districtCommitteeId int)
 select 
-    dc.district_committee_id as districtCommitteeId,
     ec.symbol as electionCommittee,
     sum(ecv.vote_number) as numberOfVotes,
-    (select sum(ecv1.vote_number) from openpkw.ELECTION_COMMITTEE_VOTE ecv1 where ecv1.ELECTION_COMMITTEE_DISTRICT_id in (select ecd1.ELECTION_COMMITTEE_DISTRICT_id from openpkw.ELECTION_COMMITTEE_DISTRICT ecd1 where ecd.district_committee_id = ecd1.district_committee_id)) as totalNumberOfVotes
+    (select sum(ecv1.vote_number) from openpkw.ELECTION_COMMITTEE_VOTE ecv1 where ecv1.ELECTION_COMMITTEE_DISTRICT_id in (select ecd1.ELECTION_COMMITTEE_DISTRICT_id from openpkw.ELECTION_COMMITTEE_DISTRICT ecd1 where ecd.district_committee_id = districtCommitteeId)) as totalNumberOfVotes
 from 
     openpkw.ELECTION_COMMITTEE_VOTE ecv
 join
@@ -80,6 +87,8 @@ join
     openpkw.DISTRICT_COMMITTEE dc
 on
     dc.district_committee_id = ecd.district_committee_id
+where
+	dc.district_committee_id = districtCommitteeId
 group by 
     districtCommitteeId, electionCommittee
 order by

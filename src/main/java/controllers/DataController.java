@@ -13,19 +13,19 @@ public class DataController {
     private DBUtils dbUtils;
 
     public Result votesForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_country_votes;");
+        return returnSqlQueryResultAsJson("call openpkw.getCountryVotes();");
     }
 
     public Result frequencyForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_country_frequency;");
+        return returnSqlQueryResultAsJson("call openpkw.getCountryFrequency();");
     }
 
     public Result protocolsForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_country_protocols;");
+        return returnSqlQueryResultAsJson("call openpkw.getCountryProtocols();");
     }
 
     public Result districtCommitteesForCountry() {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_country_district_committees;");
+        return returnSqlQueryResultAsJson("call openpkw.getCountryDistrictCommittees();");
     }
 
 
