@@ -176,24 +176,27 @@ begin
 		numberOfVotes desc;
 end;     
     
-drop view if exists openpkw.results_district_peripheral_committees;
-create view openpkw.results_district_peripheral_committees as
-select
-    pc.district_committee_id as districtCommitteeId,
-    pc.territorial_code as territorialCode,
-    pc.peripheral_committee_id as peripheralCommitteeId,
-    pc.peripheral_committee_number as peripheralCommitteeNumber,
-    pc.name as peripheralCommitteeName,
-    pc.allowed_to_vote as allowedToVote,
-    p.cards_given as cardsGiven,
-    p.invalid_votes as invalidVotes
-from 
-    openpkw.PERIPHERAL_COMMITTEE pc
-left join
-	openpkw.Protocol p
-on
-	pc.peripheral_committee_id = p.peripheral_committee_id;
-    
+drop procedure if exists openpkw.getDistrictPeripheralCommittees;
+create procedure openpkw.getDistrictPeripheralCommittees(in districtCommitteeId int)
+begin
+	select
+	    pc.district_committee_id as districtCommitteeId,
+	    pc.territorial_code as territorialCode,
+	    pc.peripheral_committee_id as peripheralCommitteeId,
+	    pc.peripheral_committee_number as peripheralCommitteeNumber,
+	    pc.name as peripheralCommitteeName,
+	    pc.allowed_to_vote as allowedToVote,
+	    p.cards_given as cardsGiven,
+	    p.invalid_votes as invalidVotes
+	from 
+	    openpkw.PERIPHERAL_COMMITTEE pc
+	left join
+		openpkw.Protocol p
+	on
+		pc.peripheral_committee_id = p.peripheral_committee_id
+	where
+		pc.DISTRICT_COMMITTEE_ID = districtCommitteeId;
+end;
     
 -- periphery level
 
