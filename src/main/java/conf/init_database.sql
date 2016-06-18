@@ -48,13 +48,16 @@ on
 
 -- district level
 
-drop view if exists openpkw.results_district_details;
-create view openpkw.results_district_details as
-select
-    district_committee_id as districtCommitteeId,
-    name as districtName
-from
-    openpkw.DISTRICT_COMMITTEE;
+drop procedure if exists openpkw.getDistrictDetails;
+create procedure openpkw.getDistrictDetails(in districtCommitteeId int)
+begin
+	select
+		name as districtName
+	from
+		openpkw.DISTRICT_COMMITTEE
+	where
+		district_committee_id = districtCommitteeId;
+end;
     
 drop view if exists openpkw.results_district_votes;
 create view openpkw.results_district_votes as
@@ -100,27 +103,48 @@ select
 from
     openpkw.DISTRICT_COMMITTEE dc;
        
-drop view if exists openpkw.results_district_candidates;
-create view openpkw.results_district_candidates as
-select
-    ecd.district_committee_id as districtCommitteeId,
-    ec.long_name as electionCommitteeName,
-    c.position_on_list as positionOnList,
-    c.id as candidateId,
-    concat(c.name, ' ', c.surname) as candidateName,
-    (select sum(v.CANDIDATES_VOTES_NUMBER) from openpkw.VOTE v where v.candidate_id = c.id) as numberOfVotes,
-    (select sum(v.CANDIDATES_VOTES_NUMBER) from openpkw.VOTE v where v.candidate_id in (select id from openpkw.CANDIDATE where election_committee_district_id in (select election_committee_district_id from openpkw.ELECTION_COMMITTEE_DISTRICT where district_committee_id = ecd.district_committee_id))) as totalNumberOfVotes,
-    (select false) as mandate
-from
-    openpkw.CANDIDATE c
-join
-    openpkw.ELECTION_COMMITTEE_DISTRICT ecd
-on
-    c.ELECTION_COMMITTEE_DISTRICT_id = ecd.ELECTION_COMMITTEE_DISTRICT_id
-join
-    openpkw.ELECTION_COMMITTEE ec
-on
-    ecd.election_committee_id = ec.election_committee_id;
+    
+drop procedure if exists openpkw.getDistrictCandidates;
+create procedure openpkw.getDistrictCandidates(in districtCommitteeId int)
+begin
+	declare _totalNumberOfVotesInDistrict int default 0;
+    set _totalNumberOfVotesInDistrict = (
+    	select sum(CANDIDATES_VOTES_NUMBER) from openpkw.VOTE where PROTOCOL_ID in (
+			select 	p.PROTOCOL_ID from  openpkw.PROTOCOL p where p.PERIPHERAL_COMMITTEE_ID in (
+				select peripheral_committee_id from openpkw.PERIPHERAL_COMMITTEE where DISTRICT_COMMITTEE_ID = 739
+			)
+		)
+	);
+		
+	select
+		ec.long_name as electionCommitteeName,
+		c.position_on_list as positionOnList,
+		c.id as candidateId,
+		concat(c.name, ' ', c.surname) as candidateName,
+		sum(v.CANDIDATES_VOTES_NUMBER) as numberOfVotes,
+		_totalNumberOfVotesInDistrict as totalNumberOfVotes,
+		(select false) as mandate   
+	from
+		openpkw.VOTE v 
+	left join
+		openpkw.CANDIDATE c
+	on
+		v.CANDIDATE_ID = c.ID
+	join
+		openpkw.ELECTION_COMMITTEE_DISTRICT ecd
+	on
+		c.ELECTION_COMMITTEE_DISTRICT_ID = ecd.ELECTION_COMMITTEE_DISTRICT_ID
+	join
+		openpkw.ELECTION_COMMITTEE ec
+	on
+		ecd.election_committee_id = ec.election_committee_id
+	where
+		ecd.DISTRICT_COMMITTEE_ID = 739
+	group by
+		electionCommitteeName, positionOnList, candidateId, candidateName, mandate
+	order by
+		numberOfVotes desc;
+end;    
     
 drop view if exists openpkw.results_district_election_committees;
 create view openpkw.results_district_election_committees as

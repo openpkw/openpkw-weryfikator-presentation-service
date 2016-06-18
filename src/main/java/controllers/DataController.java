@@ -28,8 +28,10 @@ public class DataController {
         return returnSqlQueryResultAsJson("select * from openpkw.results_country_district_committees;");
     }
 
+
+    
     public Result districtDetails(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_details where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("call openpkw.getDistrictDetails(" + districtId + ");");
     }
 
     public Result votesForDistrict(@PathParam("districtId") int districtId) {
@@ -49,13 +51,15 @@ public class DataController {
     }
 
     public Result candidatesForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_candidates where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
+        return returnSqlQueryResultAsJson("call openpkw.getDistrictCandidates(" + districtId + ");");
     }
 
     public Result electionCommitteesForDistrict(@PathParam("districtId") int districtId) {
         return returnSqlQueryResultAsJson("select * from openpkw.results_district_election_committees where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
     }
 
+    
+    
     public Result peripheryDetails(@PathParam("peripheryId") int peripheryId) {
         return returnSqlQueryResultAsJson("call openpkw.getPeripheryDetails(" + peripheryId + ");");
     }
@@ -75,6 +79,8 @@ public class DataController {
     public Result electionCommitteesForPeriphery(@PathParam("peripheryId") int peripheryId) {
         return returnSqlQueryResultAsJson("call openpkw.getPeripheryElectionCommittees(" + peripheryId + ");");
     }
+    
+    
 
     private Result returnSqlQueryResultAsJson(String sqlQuery) {
         try {
