@@ -35,11 +35,11 @@ public class DataController {
     }
 
     public Result votesForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_votes where districtCommitteeId = " + districtId + " order by numberOfVotes desc;");
+        return returnSqlQueryResultAsJson("call openpkw.getDistrictVotes(" + districtId + ");");
     }
 
     public Result frequencyForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_frequency where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("call openpkw.getDistrictFrequency(" + districtId + ");");
     }
 
     public Result protocolsForDistrict(@PathParam("districtId") int districtId) {
@@ -47,7 +47,7 @@ public class DataController {
     }
 
     public Result peripheralCommitteesForDistrict(@PathParam("districtId") int districtId) {
-        return returnSqlQueryResultAsJson("select * from openpkw.results_district_peripheral_committees where districtCommitteeId = " + districtId + ";");
+        return returnSqlQueryResultAsJson("call openpkw.getDistrictPeripheralCommittees(" + districtId + ");");
     }
 
     public Result candidatesForDistrict(@PathParam("districtId") int districtId) {

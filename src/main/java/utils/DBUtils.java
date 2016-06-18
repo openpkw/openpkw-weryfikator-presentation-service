@@ -4,50 +4,38 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.TimeZone;
 
 import javax.inject.Singleton;
-import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Singleton
 public class DBUtils {
 
-    private DataSource dataSource;
+    private Connection connection;
 
     private synchronized Connection getConnection() {
-        if (dataSource == null) {
-            dataSource = createDataSource();
+        if (connection == null) {
+            connection = createConnection();
             initializeViews();
         }
         try {
-            return dataSource.getConnection();
+            return connection;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to obtain a Connection from the data source: " + ex.getMessage(), ex);
         }
     }
 
-    private synchronized DataSource createDataSource() {
+    private synchronized Connection createConnection() {
         try {
             String timezone = TimeZone.getDefault().getID().toString();
-
-            BasicDataSource ds = new BasicDataSource();
-            ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            ds.setUsername("openpkw");
-            ds.setPassword("lwejlr2k3jlsfedlk2j34");
-            ds.setUrl("jdbc:mysql://localhost/openpkw");
-            ds.setMinIdle(10);
-            ds.setMaxIdle(20);
-            ds.setMaxOpenPreparedStatements(20);
-            ds.setConnectionProperties("serverTimezone=" + timezone + ";allowMultiQueries=true;useSSL=false");
-
-            return ds;
-
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?serverTimezone=" + timezone + "&allowMultiQueries=true&useSSL=false", "openpkw", "lwejlr2k3jlsfedlk2j34");
+            return connection;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create connection to the database: " + ex.getMessage(), ex);
         }
