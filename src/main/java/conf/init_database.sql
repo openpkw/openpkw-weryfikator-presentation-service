@@ -157,7 +157,7 @@ begin
 		ecd.list_number as listNumber,
 		ec.long_name as electionCommitteeName,
 		sum(ecv.vote_number) as numberOfVotes,
-        2 as totalNumberOfVotes
+        _totalNumberOfVotesInDistrict as totalNumberOfVotes
 	from 
 		openpkw.ELECTION_COMMITTEE_VOTE ecv 
 	left join
