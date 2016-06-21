@@ -200,7 +200,7 @@ begin
 	from 
 	    openpkw.PERIPHERAL_COMMITTEE pc
 	left join
-		openpkw.Protocol p
+		openpkw.PROTOCOL p
 	on
 		pc.peripheral_committee_id = p.peripheral_committee_id
 	where

@@ -1,5 +1,8 @@
 package utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +37,7 @@ public class DBUtils {
     private synchronized Connection createConnection() {
         try {
             String timezone = TimeZone.getDefault().getID().toString();
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?serverTimezone=" + timezone + "&allowMultiQueries=true&useSSL=false", "openpkw", "lwejlr2k3jlsfedlk2j34");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?serverTimezone=" + timezone + "&allowMultiQueries=true&useSSL=false&autoReconnect=true", "openpkw", "lwejlr2k3jlsfedlk2j34");
             return connection;
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create connection to the database: " + ex.getMessage(), ex);
@@ -43,14 +46,29 @@ public class DBUtils {
 
     private void initializeViews() {
         try {
-            System.out.println("Configuring views");
             String databaseInitializationFileName = "conf/init_database.sql";
-            Path databaseInitializationFile = Paths.get(ClassLoader.getSystemResource(databaseInitializationFileName).toURI());
-            String databaseInitializationScript = new String(Files.readAllBytes(databaseInitializationFile));
+
+            System.out.println("Configuring views using file " + databaseInitializationFileName);
+            URL databaseInitializationFileURL = ClassLoader.getSystemResource(databaseInitializationFileName);
+            InputStream in = databaseInitializationFileURL.openStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int readBytes = 0;
+            do {
+                readBytes = in.read(buffer);
+                if (readBytes > 0) {
+                    out.write(buffer, 0, readBytes);
+                }
+                ;
+            } while (readBytes > 0);
+            in.close();
+            out.flush();
+            out.close();
+            String databaseInitializationScript = new String(out.toByteArray());
             getConnection().createStatement().execute(databaseInitializationScript);
             System.out.println("Views configuration complete");
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to initialize database views: " + ex.getMessage(), ex);
+            throw new RuntimeException("Failed to initialize database   views: " + ex.getMessage(), ex);
         }
     }
 
