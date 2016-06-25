@@ -1,11 +1,8 @@
 package utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,16 +13,21 @@ import javax.inject.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class DBUtils {
+    
+    private static final Logger logger = LoggerFactory.getLogger(DBUtils.class);
 
     private Connection connection;
-
+         
     private synchronized Connection getConnection() {
+        logger.trace("getConnection");
         if (connection == null) {
             connection = createConnection();
-            initializeViews();
+            initDatabase();
         }
         try {
             return connection;
@@ -35,6 +37,7 @@ public class DBUtils {
     }
 
     private synchronized Connection createConnection() {
+        logger.trace("createConnection");
         try {
             String timezone = TimeZone.getDefault().getID().toString();
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/openpkw?serverTimezone=" + timezone + "&allowMultiQueries=true&useSSL=false&autoReconnect=true", "openpkw", "lwejlr2k3jlsfedlk2j34");
@@ -44,35 +47,19 @@ public class DBUtils {
         }
     }
 
-    private void initializeViews() {
-        try {
-            String databaseInitializationFileName = "conf/init_database.sql";
-
-            System.out.println("Configuring views using file " + databaseInitializationFileName);
-            URL databaseInitializationFileURL = ClassLoader.getSystemResource(databaseInitializationFileName);
-            InputStream in = databaseInitializationFileURL.openStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int readBytes = 0;
-            do {
-                readBytes = in.read(buffer);
-                if (readBytes > 0) {
-                    out.write(buffer, 0, readBytes);
-                }
-                ;
-            } while (readBytes > 0);
-            in.close();
-            out.flush();
-            out.close();
-            String databaseInitializationScript = new String(out.toByteArray());
-            getConnection().createStatement().execute(databaseInitializationScript);
-            System.out.println("Views configuration complete");
+    private void initDatabase() {
+        logger.trace("initDatabase");
+        try {            
+            String dbScript = readResourceFile("conf/init_database.sql");                        
+            getConnection().createStatement().execute(dbScript);
+            logger.info("Database DDL initialized.");
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to initialize database   views: " + ex.getMessage(), ex);
+            throw new RuntimeException("Failed to initialize database views: " + ex.getMessage(), ex);
         }
     }
 
     public ResultSet executeQuery(String sqlQuery) {
+        logger.trace("executeQuery");
         long startTime = System.currentTimeMillis();
         try {
             Statement stmt = getConnection().createStatement();
@@ -86,8 +73,29 @@ public class DBUtils {
     }
 
     public String executeQueryAndReturnJSON(String sqlQuery) {
+        logger.trace("executeQueryAndReturnJSON");
         ResultSet rs = executeQuery(sqlQuery);
         return resultSet2json(rs);
+    }
+    
+    private String readResourceFile(String fileName) throws IOException{
+        logger.trace("readResourceFile {}", fileName);
+        InputStream in = ClassLoader.getSystemResource(fileName).openStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int readBytes = 0;
+        do {
+            readBytes = in.read(buffer);
+            if (readBytes > 0) {
+                out.write(buffer, 0, readBytes);
+            }
+            ;
+        } while (readBytes > 0);
+        in.close();
+        out.flush();
+        out.close();
+        
+        return new String(out.toByteArray());
     }
 
     private String resultSet2json(ResultSet rs) {
